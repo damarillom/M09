@@ -19,7 +19,7 @@ import javax.crypto.NoSuchPaddingException;
  * @author gines
  */
 public class Orbita_10 {
-    public static void main(String[] args) throws IOException  {
+    public static void main(String[] args) throws IOException, InterruptedException  {
         PNS24_Puma objPNS24_Puma = new PNS24_Puma();
         
         //PNS24_Puma.menuPNS24Puma();

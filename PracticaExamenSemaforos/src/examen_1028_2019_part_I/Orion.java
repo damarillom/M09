@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * @author gmartinez
  */
 public class Orion {
-    public static void menuOrion() throws IOException  {
+    public static void menuOrion() throws IOException, InterruptedException  {
         String opcio;
         Scanner sc = new Scanner(System.in);
         StringBuilder menu = new StringBuilder("");
@@ -53,9 +53,36 @@ public class Orion {
         } while (!opcio.equals("50"));
     }
 
-	private static void activarSistemaDelta() {
+	private static void activarSistemaDelta() throws InterruptedException {
 		// TODO Auto-generated method stub
+		Radar_Orion_A radar = new Radar_Orion_A();
+		Sistema_de_guia_Delta delta1 = new Sistema_de_guia_Delta(radar);
+		Sistema_de_guia_Delta delta2 = new Sistema_de_guia_Delta(radar);
+		Sistema_de_guia_Delta delta3 = new Sistema_de_guia_Delta(radar);
+		Sistema_de_guia_Delta delta4 = new Sistema_de_guia_Delta(radar);
 		
+		Thread filOperacio1 = new Thread(delta1);
+        filOperacio1.setName("Delta-1");
+        Thread filOperacio2 = new Thread(delta2);
+        filOperacio2.setName("Delta-2");
+        Thread filOperacio3 = new Thread(delta3);
+        filOperacio3.setName("Delta-3");
+        Thread filOperacio4 = new Thread(delta4);
+        filOperacio4.setName("Delta-4");
+        
+        filOperacio1.start();
+        filOperacio2.start();
+        filOperacio3.start();
+        filOperacio4.start();
+        
+        filOperacio1.join();
+        filOperacio2.join();
+        filOperacio3.join();
+        filOperacio4.join();
+        System.out.println("hola");
+        //Thread.sleep(20000);
+        radar.desconectarDeltasDelRadar();
+        System.out.println("Fin programa principal");
 	}
     
     

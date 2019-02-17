@@ -5,6 +5,7 @@
  */
 package examen_1028_2019_part_I;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -62,10 +63,11 @@ public class Meteorit implements Comparable {
 	@Override
 	public int compareTo(Object m) {
 		// TODO Auto-generated method stub
-		if (!(this.distancia == ((Meteorit) m).getDistancia())) {
+		/**if (!(this.distancia == ((Meteorit) m).getDistancia())) {
 			return this.distancia - ((Meteorit) m).getDistancia();
 		}
-		return this.id - ((Meteorit) m).getId();
+		return this.id - ((Meteorit) m).getId();*/
+		return Comparator.comparingInt(Meteorit::getDistancia).thenComparingInt(Meteorit::getId).compare(this, ((Meteorit) m));
 	}
 
     

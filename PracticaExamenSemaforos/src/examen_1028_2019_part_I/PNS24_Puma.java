@@ -22,7 +22,7 @@ public class PNS24_Puma {
     }
     
     
-    static void menuPNS24Puma() throws IOException  {
+    static void menuPNS24Puma() throws IOException, InterruptedException  {
         String opcio;
         StringBuilder menu = new StringBuilder("");
         Scanner sc = new Scanner(System.in);
@@ -34,7 +34,7 @@ public class PNS24_Puma {
             menu.append("PNS-24 Puma");
             menu.append(System.getProperty("line.separator"));
             menu.append(System.getProperty("line.separator"));
-            menu.append("1. Sistema de navegació Krona");
+            menu.append("1. Sistema de navegacio Krona");
             menu.append(System.getProperty("line.separator"));
             menu.append("2. Sistema d'atac Orion");
             menu.append(System.getProperty("line.separator"));

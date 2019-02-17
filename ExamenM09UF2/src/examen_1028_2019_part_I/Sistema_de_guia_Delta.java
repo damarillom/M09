@@ -33,7 +33,7 @@ public class Sistema_de_guia_Delta implements Runnable{
 		
 		//Thread.sleep(20000);
 		
-		System.out.println("    " + Thread.currentThread().getName() + " assignando a un meorito");
+		/**System.out.println("    " + Thread.currentThread().getName() + " assignando a un meorito");
 		try {
 			System.out.println("    " + Thread.currentThread().getName() + " asignado al meteorito " + radar.assignarObjectiu(Thread.currentThread().getName()));
 		} catch (InterruptedException e) {
@@ -51,7 +51,7 @@ public class Sistema_de_guia_Delta implements Runnable{
 		}*/
 		//try {
 			//if (radar.carregarDadesObjectiu(radar.assignarObjectiu(Thread.currentThread().getName())).getId() == 4) { 
-				try {
+				/**try {
 					radar.notifyUnDelta(Thread.currentThread().getName());
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
@@ -61,7 +61,40 @@ public class Sistema_de_guia_Delta implements Runnable{
 		//} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 		//	e.printStackTrace();
-		//}
+		//}*/
+		
+		
+		int meteoritoId = -1;
+		do {
+			
+			try {
+				meteoritoId = radar.assignarObjectiu(Thread.currentThread().getName());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (meteoritoId != -1) {
+				try {
+					System.out.println("    " + Thread.currentThread().getName() + " Destruyendo meteorito: " + meteoritoId);
+					Meteorit meteorit = radar.carregarDadesObjectiu(meteoritoId);
+					Thread.sleep(meteorit.getDistancia()/10);
+					
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (meteoritoId == 4) {
+					try {
+						
+						radar.notifyUnDelta(Thread.currentThread().getName());
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			
+		} while (meteoritoId > -1);
 		
         System.out.println("    " + Thread.currentThread().getName() + ".REALITZO L'OPERACIÓ");
         

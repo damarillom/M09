@@ -5,6 +5,7 @@
  */
 package examen_1028_2019_part_I;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Objects;
  */
 
 //OJO que a la declaració de la classe  li falta algo...
-public class Meteorit{
+public class Meteorit implements Comparable {
     private Integer id;
     private Integer distancia;
     private String SistemaDeGuiaAssignat;
@@ -25,7 +26,46 @@ public class Meteorit{
         this.SistemaDeGuiaAssignat = "CAP";
     }
 
-    
+    public Integer getId() {
+		return id;
+	}
+
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+
+	public Integer getDistancia() {
+		return distancia;
+	}
+
+
+	public void setDistancia(Integer distancia) {
+		this.distancia = distancia;
+	}
+
+
+	public String getSistemaDeGuiaAssignat() {
+		return SistemaDeGuiaAssignat;
+	}
+
+
+	public void setSistemaDeGuiaAssignat(String sistemaDeGuiaAssignat) {
+		SistemaDeGuiaAssignat = sistemaDeGuiaAssignat;
+	}
+
+
+	@Override
+	public int compareTo(Object m) {
+		/**if ((this.distancia == ((Meteorit) m).getDistancia())) {
+			//return this.distancia - ((Meteorit) m).getDistancia();
+			return this.id - ((Meteorit) m).getId();
+		}
+		return this.distancia - ((Meteorit) m).getDistancia();*/
+		
+		return Comparator.comparingInt(Meteorit::getDistancia).thenComparingInt(Meteorit::getId).compare(this, ((Meteorit) m));
+	}
   
     
     
