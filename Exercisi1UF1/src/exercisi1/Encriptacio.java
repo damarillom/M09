@@ -1,5 +1,16 @@
 package exercisi1;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -8,6 +19,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -33,6 +45,9 @@ public class Encriptacio {
 			0x07,
 			0x0B,
 			0x0F};
+	private static final String DIRECTORI_FITXERS = "/home/users/inf/wiam2/iam26509397/M09/Exercisi1UF1/data/datos.txt";
+	private static final String FITXER_DADES_TRIPULANTS_XIFRADES_AES128 = "/home/users/inf/wiam2/iam26509397/M09/Exercisi1UF1/data/aes128.txt";
+	private static final String DECRYPT = "/home/users/inf/wiam2/iam26509397/M09/Exercisi1UF1/data/decrypt.txt";
 	
 	public static SecretKey generadorDeClausSimetriques(int i) {
 		SecretKey sKey = null;
@@ -142,7 +157,7 @@ public class Encriptacio {
             //Encriptem les dades amb AES en mode CBC.
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding"); 
             IvParameterSpec iv = new IvParameterSpec(IV_PARAM); 
-            cipher.init(Cipher.ENCRYPT_MODE, clauSecretaSimetrica, iv); 
+            cipher.init(Cipher.ENCRYPT_MODE, clauSecretaSimetrica); 
             dadesEncriptadesEnByte = cipher.doFinal(dadesAEncriptarEnByte); 
             
             dadesEncriptadesEnString = new BASE64Encoder().encode(dadesEncriptadesEnByte);
@@ -201,13 +216,13 @@ public class Encriptacio {
         }
 	}
 
-	public void menu21(SecretKey clauSecretaSimetrica) {
+	public void menu21(SecretKey clauSecretaSimetrica) throws IOException {
 		// TODO Auto-generated method stub
-		
+		//System.out.println("hola");
 		String dades;
         byte[] dadesAEncriptarEnByte;
 
-        dades = extreureTripulantsDB();
+        dades = extreureTripulantsDB(DIRECTORI_FITXERS);
         //System.out.println("dadesAEncriptarEnString: \n" + dades);
         //System.out.println();
         dadesAEncriptarEnByte = dades.getBytes();
@@ -221,6 +236,7 @@ public class Encriptacio {
             cipher.init(Cipher.ENCRYPT_MODE, clauSecretaSimetrica, iv);
             // Encriptem les dades amb AES en mode CBC directament a un fitxer.
             CipherOutputStream cos = new CipherOutputStream(new FileOutputStream(FITXER_DADES_TRIPULANTS_XIFRADES_AES128), cipher);
+            //String str = new String(dadesAEncriptarEnByte);
             cos.write(dadesAEncriptarEnByte);
             cos.close();
         } catch (Exception ex) {
@@ -229,59 +245,94 @@ public class Encriptacio {
             System.out.println("menu 21(): FINAL");
         }
         
-        /*
-        FileOutputStream fos = null;
-        CipherOutputStream cos = null;
-        FileInputStream fis = null;
-        try {
-            // Preparem l'encriptació.
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            IvParameterSpec iv = new IvParameterSpec(IV_PARAM);
-            cipher.init(Cipher.ENCRYPT_MODE, clauSecretaSimetrica, iv);
-            
-            fis = new FileInputStream(inputFile);   //SERA dadesAEncriptarEnByte.
-            fos = new FileOutputStream(FITXER_DADES_TRIPULANTS_XIFRADES_AES128);
-            cos = new CipherOutputStream(fos, cipher);
-            byte[] data = new byte[1024];
-            int read = fis.read(data);
-            while (read != -1) {
-                cos.write(data, 0, read);
-                read = fis.read(data);
-                System.out.println(new String(data, "UTF-8").trim());
-            }
-            cos.flush();
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(Encriptacio.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchPaddingException ex) {
-            Logger.getLogger(Encriptacio.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidKeyException ex) {
-            Logger.getLogger(Encriptacio.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidAlgorithmParameterException ex) {
-            Logger.getLogger(Encriptacio.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Encriptacio.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                fos.close();
-                cos.close();
-                fis.close();
-            }
-             catch (IOException ex) {
-                Logger.getLogger(Encriptacio.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        */
 		
 	}
 
 	public void menu22(SecretKey clauSecretaSimetrica, KeyPair clauPublicaIPrivada) {
 		// TODO Auto-generated method stub
-		
+		 /**String dades;
+	        byte[] dadesAEncriptarEnByte;
+	        byte[] clauAESEncriptadaEnByte;
+	        String clauAESEncriptadaEnString;
+	        PublicKey clauPublica;
+
+	        dades = extreureTripulantsDB();
+	        //System.out.println("dadesAEncriptarEnString: \n" + dades);
+	        //System.out.println();
+	        dadesAEncriptarEnByte = dades.getBytes();
+	        
+	        comprobarExistenciaDirectori(DIRECTORI_FITXERS);
+
+	        try {
+	            // Preparem l'encriptació de les dades.
+	            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+	            IvParameterSpec iv = new IvParameterSpec(IV_PARAM);
+	            cipher.init(Cipher.ENCRYPT_MODE, clauSecretaSimetrica, iv);
+
+	            // Encriptem les dades amb AES en mode CBC directament a un fitxer.
+	            CipherOutputStream cos = new CipherOutputStream(new FileOutputStream(FITXER_DADES_TRIPULANTS_XIFRADES_RSA), cipher);
+	            cos.write(dadesAEncriptarEnByte);
+	            cos.close();
+
+	            // Encriptem la clau d'encriptació que s'ha fet servir amb RSA.
+	            cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+	            clauPublica = clauPublicaIPrivada.getPublic();
+	            cipher.init(Cipher.WRAP_MODE, clauPublica);
+
+	            clauAESEncriptadaEnByte = cipher.wrap(clauSecretaSimetrica);
+	            clauAESEncriptadaEnString = new BASE64Encoder().encode(clauAESEncriptadaEnByte);
+
+	            System.out.println("clauEncriptadaEnString = " + clauAESEncriptadaEnString);
+	            System.out.println();
+
+	            // Guardem la clau xifrada a un fitxer diferent a les dades.
+	            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(FITXER_CLAU_SIMETRICA_XIFRADA_RSA));
+	            bos.write(clauAESEncriptadaEnByte);
+	            bos.close();
+
+	        } catch (Exception ex) {
+	            System.err.println("ERROR: menu22() " + ex);
+	        } finally {
+	            System.out.println("menu menu22(): FINAL");
+	        }*/
 	}
 
-	public void menu31(SecretKey clauSecretaSimetrica) {
-		// TODO Auto-generated method stub
+	public void menu31(SecretKey clauSecretaSimetrica) throws IOException {
 		
+		
+		
+		// Desencriptem les dades amb AES en mode CBC.
+		try {
+	        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+	        IvParameterSpec iv = new IvParameterSpec(IV_PARAM);
+	        cipher.init(Cipher.DECRYPT_MODE, clauSecretaSimetrica, iv);
+	
+	        CipherInputStream cis = new CipherInputStream(new FileInputStream(FITXER_DADES_TRIPULANTS_XIFRADES_AES128), cipher);
+	        BufferedReader br = new BufferedReader(new InputStreamReader(cis));
+	
+	        // Preparem el fitxer per guardar les dades desxifrades.
+	        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(DECRYPT)));
+	
+	        System.out.println("dadesDesencriptadesEnString:");
+	
+	        String temp;
+	        while ((temp = br.readLine()) != null) {
+	            bw.write(temp + "\n");
+	            System.out.println(temp);
+	        }
+	        System.out.println();
+	        br.close();
+	        bw.close();
+		} catch (Exception e) {
+			 System.err.println("ERROR: R.E.menu31() " + e); 
+        } finally {
+            System.out.println("menu 31(): FINAL");
+		}
+	        
+	        
+	       
+	
+	   
 	}
 
 	public void menu32(KeyPair clauPublicaIPrivada) {
@@ -301,4 +352,29 @@ public class Encriptacio {
 
 
 
+	private void comprobarExistenciaDirectori(String directoriFitxers) {
+		// TODO Auto-generated method stub
+		File af = new File(directoriFitxers);
+		if (af.exists()) { 
+			System.out.println("El fichero existe");
+		} else {
+			System.out.println("El fichero no existe");
+		}
+	}
+
+	private String extreureTripulantsDB(String fitxer) throws IOException {
+		// TODO Auto-generated method stub
+		String texto = "";
+		String cadena;
+		File af = new File(fitxer);
+        FileReader f = new FileReader(af);
+        BufferedReader b = new BufferedReader(f);
+        while((cadena = b.readLine())!=null) {
+            System.out.println(cadena);
+            texto = texto + cadena + "\n";
+        }
+        b.close();
+        System.out.println(texto);
+		return texto;
+	}
 }
