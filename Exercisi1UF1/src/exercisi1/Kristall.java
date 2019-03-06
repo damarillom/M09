@@ -6,9 +6,14 @@
 package exercisi1;
 
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.Scanner;
+
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
 /**
@@ -26,7 +31,7 @@ public class Kristall {
     }
     
     
-    public static void menuKristall() throws IOException  {
+    public static void menuKristall() throws IOException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException  {
         SecretKey clauSecretaSimetrica = null;
         byte[] dadesEncriptadesEnByte = null; 
         KeyPair clauPublicaIPrivada = null;
