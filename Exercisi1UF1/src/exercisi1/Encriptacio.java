@@ -290,12 +290,13 @@ public class Encriptacio {
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding"); 
             clauPublica = clauPublicaIPrivada.getPublic();
             cipher.init(Cipher.ENCRYPT_MODE, clauPublica);
+            //cipher.init(Cipher.WRAP_MODE, clauPublica);
             CipherOutputStream cos = new CipherOutputStream(new FileOutputStream(FITXER_DADES_TRIPULANTS_XIFRADES_RSA_CLAU), cipher);
             //String str = new String(dadesAEncriptarEnByte);
-            String stringClau = Base64.getEncoder().encodeToString(clauSecretaSimetrica.getEncoded());
+            //String stringClau = Base64.getEncoder().encodeToString(clauSecretaSimetrica.getEncoded());
             byte[] clau = null;
-            clau = stringClau.getBytes();
-            //cos.write(clau);
+            clau = clauSecretaSimetrica.getEncoded();
+            cos.write(clau);
             cos.close();
             
             
@@ -356,43 +357,70 @@ public class Encriptacio {
 
 	public void menu32(KeyPair clauPublicaIPrivada) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IOException, InvalidAlgorithmParameterException {
 		// TODO Auto-generated method stub
-		try {
+		byte[] clauAESencypt;
+		Key clauAESdesencriptada;
+		//try {
+			File file = new File(FITXER_DADES_TRIPULANTS_XIFRADES_RSA_CLAU);
+			FileInputStream fis = new FileInputStream(file);
+			clauAESencypt = new byte[(int) file.length()];
+			fis.read(clauAESencypt);
+			fis.close();
+			System.out.println(clauAESencypt);
+			
+			
 			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding"); 
 			PrivateKey clauPrivada = clauPublicaIPrivada.getPrivate();
-			cipher.init(Cipher.DECRYPT_MODE, clauPrivada);
+			//cipher.init(Cipher.DECRYPT_MODE, clauPrivada);
+			cipher.init(Cipher.UNWRAP_MODE, clauPrivada);
+			clauAESdesencriptada = cipher.unwrap(clauAESencypt, "AES", Cipher.SECRET_KEY);
 			
-			CipherInputStream cis = new CipherInputStream(new FileInputStream(FITXER_DADES_TRIPULANTS_XIFRADES_RSA_CLAU), cipher);
-	        BufferedReader br = new BufferedReader(new InputStreamReader(cis));
+			//CipherInputStream cis = new CipherInputStream(new FileInputStream(FITXER_DADES_TRIPULANTS_XIFRADES_RSA_CLAU), cipher);
+	        //BufferedReader br = new BufferedReader(new InputStreamReader(cis));
 	        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(DECRYPT2)));
-	        String publicKey = "";
-	        String temp;
-	        while ((temp = br.readLine()) != null) {
+	        /**byte[] publicKey = null;
+	        byte[] temp;
+	        BufferedReader br3 = new BufferedReader(new FileReader(FITXER_DADES_TRIPULANTS_XIFRADES_RSA_CLAU));
+	        /**while ((temp = br3.readLine()) != null) {
+	        	System.out.println("************" + temp);
+	        }*/
+	        /**while ((temp = br.read()) != null) {
+	        	/**System.out.println("*********" + temp);
 	            publicKey += temp;
+	        	publicKey += temp;
+	        }*/
+	        /**byte[] block = new byte[32];
+	        int i;
+	        while ((i = cis.read(block)) != -1) {
+	        	publicKey = block;
+	        	//fos.write(block, 0, i);
 	        }
-	        System.out.println("****" +publicKey);
-	        byte[] decodedKey = Base64.getDecoder().decode(publicKey);
+	        
+	        System.out.println("****" +publicKey);*/
+	        //byte[] decodedKey = Base64.getDecoder().decode(publicKey);
 	        // rebuild key using SecretKeySpec
-	        SecretKey originalKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
+	        //SecretKey originalKey = new SecretKeySpec(publicKey, 0, publicKey.length, "AES");
 	        
 	        cipher.getInstance("AES/CBC/PKCS5Padding");
 	        IvParameterSpec iv = new IvParameterSpec(IV_PARAM);
-	        cipher.init(Cipher.DECRYPT_MODE, originalKey, iv);
+	        //cipher.init(Cipher.DECRYPT_MODE, originalKey, iv);
+	        cipher.init(Cipher.DECRYPT_MODE, clauAESdesencriptada, iv);
+	        //cipher.init(Cipher.DECRYPT_MODE, clauPublicaIPrivada.getPublic(), iv);
 	        
 	        CipherInputStream cis2 = new CipherInputStream(new FileInputStream(FITXER_DADES_TRIPULANTS_XIFRADES_AES128), cipher);
-	        BufferedReader br2 = new BufferedReader(new InputStreamReader(cis));
+	        BufferedReader br2 = new BufferedReader(new InputStreamReader(cis2));
 	        String temp2;
 	        while ((temp2 = br2.readLine()) != null) {
 	            bw.write(temp2 + "\n");
-	            System.out.println(temp);
+	            System.out.println(temp2);
 	        }
-	        br.close();
+	        //br.close();
 	        bw.close();
 	        br2.close();
-		} catch (Exception e) {
+		/**} catch (Exception e) {
 			System.err.println("ERROR: R.E.menu32() " + e); 
 		} finally {
 			System.out.println("menu 32(): FINAL");
-		}
+		}*/
 	}
 
 	public void menu41(SecretKey clauSecretaSimetrica) {
