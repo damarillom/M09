@@ -1,1 +1,2 @@
-Este fichero es importante./nDebe ser encriptado./n
+Este fichero es importante.
+Debe ser encriptado.
