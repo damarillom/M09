@@ -15,7 +15,9 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.KeyPair;
+import java.security.PublicKey;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -109,12 +111,18 @@ public class SPU_9_client {
                         resposta = "TANCARCONNEXIO" + separador + "El client tanca la comunicació.";
                         opcioCorrecta = true;
                     case "1":
-
+                    	clauPublicaIPrivada = GeneradorDeClaus.generadorDeClausAsimetriques(1024);
                         //opcioCorrecta = true;
                         break;
                     case "2":
-
-                        //opcioCorrecta = true;
+                    	PublicKey publicKey = clauPublicaIPrivada.getPublic();
+                    	byte[] encodedPublicKey = publicKey.getEncoded();
+                    	String b64PublicKey = Base64.getEncoder().encodeToString(encodedPublicKey);
+                    	//System.out.println(b64PublicKey);
+                    	missatge = b64PublicKey;
+                    	//System.out.println(missatge);
+                    	resposta = "CLAUPUBLICA" + separador + missatge;
+                        opcioCorrecta = true;
                         break;    
                     case "11":
                         Scanner sc2 = new Scanner(System.in);
@@ -181,10 +189,15 @@ public class SPU_9_client {
     
     
     private static void enviarClauPublica(String[] dadesAEnviar, PrintWriter sortidaCapAlSocket, Socket socket) {
+    	//ESTO FALLA
+    	
+    	
+    	
         //Enviem el codi CLAUPUBLICA.
-        
+    	sortidaCapAlSocket.println("CLAUPUBLICA" + separador);
+        //System.out.println(dadesAEnviar[1].replace("CLAUPUBLICA" + separador, ""));
         //Enviem la clau publica. Fem 1 enviamente de cada linia que conté.
-        
+        sortidaCapAlSocket.println(dadesAEnviar[1].replace("CLAUPUBLICA" + separador, ""));
         //Enviem el codi MISSATGEENCRIPTATFI.
         sortidaCapAlSocket.println("CLAUPUBLICAFI" + separador);
         sortidaCapAlSocket.flush();

@@ -74,7 +74,7 @@ public class SPU_9_server {
         
         
         if (tipusMissatge.equals("CLAUPUBLICA")){
-
+        	clauPublicaDelClientEnString = "";
         }        
         
         
@@ -112,7 +112,7 @@ public class SPU_9_server {
                         opcioCorrecta = true;
                         break;
                     case "1":
-
+                    	clauSecretaSimetrica = GeneradorDeClaus.generadorDeClausSimetriques(128);
                         //opcioCorrecta = true;
                         break;
                     case "3":
