@@ -2,9 +2,13 @@ package Exercisi1;
 
 //import static Leonov.Kristall.bloquejarPantalla;
 import com.sun.xml.internal.messaging.saaj.util.Base64;
+
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -48,7 +52,7 @@ public class SPU_9_server {
 
     
     
-    private static String[] procesarMissatgeDelClient(String missatgeDelClient, BufferedReader entradaPelClientSocket, Socket clientSocket) {
+    private static String[] procesarMissatgeDelClient(String missatgeDelClient, BufferedReader entradaPelClientSocket, Socket clientSocket) throws IOException {
         String dadesAEnviarAlClient[] = {"", ""};
         String opcio;
         boolean opcioCorrecta;
@@ -76,7 +80,25 @@ public class SPU_9_server {
         if (tipusMissatge.equals("CLAUPUBLICA")){
         	clauPublicaDelClientEnString = "";
         }        
-        
+        if (tipusMissatge.equals("FITXER")) {
+        	byte [] mybytearray  = new byte [6022386]; //Hardcodeado el tamaño del archivo
+            InputStream is = clientSocket.getInputStream();
+            FileOutputStream fos = new FileOutputStream("/home/users/inf/wiam2/iam26509397/M09/Exercisi1UF3/data/server/file.txt");
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            int bytesRead = is.read(mybytearray,0,mybytearray.length);
+            int current = bytesRead;
+       
+            do {
+               bytesRead =
+                  is.read(mybytearray, current, (mybytearray.length-current));
+               if(bytesRead >= 0) current += bytesRead;
+            } while(bytesRead > -1);
+       
+            bos.write(mybytearray, 0 , current);
+            bos.flush();
+            System.out.println("File " + "/home/users/inf/wiam2/iam26509397/M09/Exercisi1UF3/data/server"
+                + " downloaded (" + current + " bytes read)");
+        }
         
         
         if (!tipusMissatge.equals("TANCARCONNEXIO")){
@@ -196,9 +218,8 @@ public class SPU_9_server {
             // Processa la petició de connexió del client.
             do {
                 missatgeDelClient = entradaPelClientSocket.readLine();
-                
+                System.out.println("************"+missatgeDelClient);
                 dadesAEnviarAlClient = procesarMissatgeDelClient(missatgeDelClient, entradaPelClientSocket, clientSocket);
-                
                 if (!dadesAEnviarAlClient[0].equals("MISSATGEENCRIPTAT")){
                     sortidaCapAlClientSocket.println(dadesAEnviarAlClient[1]);
                     sortidaCapAlClientSocket.flush();

@@ -5,10 +5,15 @@
  */
 package Exercisi1;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -140,8 +145,11 @@ public class SPU_9_client {
                         opcioCorrecta = true;
                         break;                    
                     case "21":
+                        String path = "/home/users/inf/wiam2/iam26509397/M09/Exercisi1UF3/data/client/file.txt";
+                        resposta = "FITXER" + separador + path;
                         
-                        //opcioCorrecta = true;
+                        
+                        opcioCorrecta = true;
                         break; 
                     case "50":
                         resposta = "TANCARCONNEXIO" + separador + "El client tanca la comunicació.";
@@ -203,6 +211,30 @@ public class SPU_9_client {
         sortidaCapAlSocket.flush();
     }
     
+    private static void enviarFitxer(String[] dadesAEnviar, PrintWriter sortidaCapAlSocket, Socket socket) throws IOException {
+        String path = dadesAEnviar[1].substring(10);
+    	File myFile = new File(path);
+    	byte [] mybytearray  = new byte [(int)myFile.length()];
+    	FileInputStream fis = new FileInputStream(myFile);
+    	BufferedInputStream bis = new BufferedInputStream(fis);
+    	bis.read(mybytearray,0,mybytearray.length);
+    	String patata = "FITXER" + separador + "";
+    	sortidaCapAlSocket.println(patata);
+    	sortidaCapAlSocket.flush();
+
+    	OutputStream os = socket.getOutputStream();
+    	System.out.println("Sending " + dadesAEnviar[1] + "(" + mybytearray.length + " bytes)");
+        os.write(mybytearray,0,mybytearray.length);
+        os.flush();
+        System.out.println("Done.");
+    	
+    	
+        
+        
+        if (bis != null) bis.close();
+        if (os != null) os.close();
+    	
+    }
     
     public static void connectar(String address, int port) {
         String missatgeDelServer = "";
@@ -231,8 +263,10 @@ public class SPU_9_client {
                 //Processament de les dades rebudes i obtenció d’una nova petició.
                 dadesAEnviar = procesarMissatgeDelServidor(missatgeDelServer, entradaPelSocket);
                 //System.out.println("    " + Thread.currentThread().getName() + ": enviant les dades: " + dadesAEnviar[1]);
-                
-                if (!dadesAEnviar[0].equals("CLAUPUBLICA")){
+                if (dadesAEnviar[0].equals("FITXER")) {
+                	//PARA ENVIAR EL FICHERO AL SERVER
+                	enviarFitxer(dadesAEnviar, sortidaCapAlSocket, socket);
+                } else if (!dadesAEnviar[0].equals("CLAUPUBLICA")){
                     sortidaCapAlSocket.println(dadesAEnviar[1]);    //Assegurem que acaba amb un final de línia.
                     sortidaCapAlSocket.flush();                     //Assegurem que s’envia.
                 } else {
