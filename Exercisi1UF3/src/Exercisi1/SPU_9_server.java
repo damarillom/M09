@@ -3,15 +3,7 @@ package Exercisi1;
 //import static Leonov.Kristall.bloquejarPantalla;
 import com.sun.xml.internal.messaging.saaj.util.Base64;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.KeyFactory;
@@ -48,7 +40,8 @@ public class SPU_9_server {
     static byte[] dadesEncriptadesEnByte = null;
     static KeyPair clauPublicaIPrivada = null;
     static byte[][] dadesIClauEncriptadesEnByte = new byte[2][];
-    
+
+    static String ruta = "";
 
     
     
@@ -76,32 +69,49 @@ public class SPU_9_server {
         System.out.println("SERVER.procesarMissatgeDelClient(): tipusMissatge rebut= '" + tipusMissatge + "'."); 
         System.out.println();
         
-        
+
         if (tipusMissatge.equals("CLAUPUBLICA")){
         	clauPublicaDelClientEnString = "";
         }        
         if (tipusMissatge.equals("FITXER")) {
-        	byte [] mybytearray  = new byte [6022386]; //Hardcodeado el tamaño del archivo
-            InputStream is = clientSocket.getInputStream();
-            FileOutputStream fos = new FileOutputStream("/home/users/inf/wiam2/iam26509397/M09/Exercisi1UF3/data/server/file.txt");
-            BufferedOutputStream bos = new BufferedOutputStream(fos);
-            int bytesRead = is.read(mybytearray,0,mybytearray.length);
-            int current = bytesRead;
-       
-            do {
-               bytesRead =
-                  is.read(mybytearray, current, (mybytearray.length-current));
-               if(bytesRead >= 0) current += bytesRead;
-            } while(bytesRead > -1);
-       
-            bos.write(mybytearray, 0 , current);
-            bos.flush();
-            System.out.println("File " + "/home/users/inf/wiam2/iam26509397/M09/Exercisi1UF3/data/server"
-                + " downloaded (" + current + " bytes read)");
-        }
-        
-        
-        if (!tipusMissatge.equals("TANCARCONNEXIO")){
+            System.out.println("Hola");
+            ruta = "/home/users/inf/wiam2/iam26509397/M09/Exercisi1UF3/data/server/" + missatgeDelClient.substring(10);
+            File archivo = new File(ruta);
+            BufferedWriter bw;
+            if (archivo.exists()) {
+                bw = new BufferedWriter(new FileWriter(archivo));
+                bw.write("");
+            } else {
+                bw = new BufferedWriter(new FileWriter(archivo));
+                bw.write("");
+            }
+            /**byte [] mybytearray  = new byte [6022386]; //Hardcodeado el tamaño del archivo
+             InputStream is = clientSocket.getInputStream();
+             FileOutputStream fos = new FileOutputStream(ruta);
+             BufferedOutputStream bos = new BufferedOutputStream(fos);
+             int bytesRead = is.read(mybytearray,0,mybytearray.length);
+             int current = bytesRead;
+
+             do {
+             bytesRead =
+             is.read(mybytearray, current, (mybytearray.length-current));
+             if(bytesRead >= 0) current += bytesRead;
+             } while(bytesRead > -1);
+
+             bos.write(mybytearray, 0 , current);
+             bos.flush();
+             //System.out.println("File " + "/home/users/inf/wiam2/iam26509397/M09/Exercisi1UF3/data/server + " downloaded (" + current + " bytes read)");*/
+        } else if (tipusMissatge.equals("LINE_FITXER")) {
+            System.out.println("Hola amigo");
+            File archivo = new File(ruta);
+            //System.out.println(ruta);
+            FileWriter fw = new FileWriter(archivo.getAbsoluteFile(),true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(missatgeDelClient.substring(15));
+            bw.close();
+        } else if (tipusMissatge.equals("FI_FITXER")) {
+
+        } else if (!tipusMissatge.equals("TANCARCONNEXIO")){
             Scanner sc = new Scanner(System.in);
             opcioCorrecta = false;
             do {

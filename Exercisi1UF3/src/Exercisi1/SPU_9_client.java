@@ -5,17 +5,7 @@
  */
 package Exercisi1;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -214,25 +204,37 @@ public class SPU_9_client {
     private static void enviarFitxer(String[] dadesAEnviar, PrintWriter sortidaCapAlSocket, Socket socket) throws IOException {
         String path = dadesAEnviar[1].substring(10);
     	File myFile = new File(path);
-    	byte [] mybytearray  = new byte [(int)myFile.length()];
+    	/**byte [] mybytearray  = new byte [(int)myFile.length()];
     	FileInputStream fis = new FileInputStream(myFile);
     	BufferedInputStream bis = new BufferedInputStream(fis);
-    	bis.read(mybytearray,0,mybytearray.length);
-    	String patata = "FITXER" + separador + "";
-    	sortidaCapAlSocket.println(patata);
-    	sortidaCapAlSocket.flush();
+    	bis.read(mybytearray,0,mybytearray.length);*/
 
-    	OutputStream os = socket.getOutputStream();
+
+
+    	String patata = "FITXER" + separador + myFile.getName();
+    	sortidaCapAlSocket.println(patata);
+    	//sortidaCapAlSocket.flush();
+        BufferedReader reader = new BufferedReader(new FileReader(path));
+        String line = reader.readLine();
+        while (line != null) {
+            patata = "LINE_FITXER" + separador + line;
+            sortidaCapAlSocket.println(patata);
+            sortidaCapAlSocket.flush();
+        }
+        reader.close();
+
+
+    	/**OutputStream os = socket.getOutputStream();
     	System.out.println("Sending " + dadesAEnviar[1] + "(" + mybytearray.length + " bytes)");
         os.write(mybytearray,0,mybytearray.length);
         os.flush();
-        System.out.println("Done.");
+        System.out.println("Done.");*/
     	
     	
         
         
-        if (bis != null) bis.close();
-        if (os != null) os.close();
+        /**if (bis != null) bis.close();
+        if (os != null) os.close();*/
     	
     }
     
