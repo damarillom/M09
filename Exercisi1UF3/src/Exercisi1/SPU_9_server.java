@@ -170,7 +170,8 @@ public class SPU_9_server {
                         //opcioCorrecta = true;
                         break;                    
                     case "21":
-                        
+                        String path = "/home/users/inf/wiam2/iam26509397/M09/Exercisi1UF3/data/server/fileServer.txt";
+                        resposta = "FITXER" + separador + path;
                         //opcioCorrecta = true;
                         break; 
                     case "50":
@@ -212,7 +213,47 @@ public class SPU_9_server {
         sortidaCapAlClientSocket.println("MISSATGEENCRIPTATFI" + separador);
         sortidaCapAlClientSocket.flush();
     }
-    
+    private static void enviarFitxer(String[] dadesAEnviar, PrintWriter sortidaCapAlSocket, Socket socket) throws IOException {
+        String path = dadesAEnviar[1].substring(10);
+        File myFile = new File(path);
+        /**byte [] mybytearray  = new byte [(int)myFile.length()];
+         FileInputStream fis = new FileInputStream(myFile);
+         BufferedInputStream bis = new BufferedInputStream(fis);
+         bis.read(mybytearray,0,mybytearray.length);*/
+
+
+
+        String patata = "FITXER" + separador + myFile.getName();
+        sortidaCapAlSocket.println(patata);
+        //sortidaCapAlSocket.flush();
+        BufferedReader reader = new BufferedReader(new FileReader(path));
+        String line = reader.readLine();
+        while (line != null) {
+            System.out.println("hola");
+            patata = "LINE_FITXER" + separador + line;
+            sortidaCapAlSocket.println(patata);
+            sortidaCapAlSocket.flush();
+            line = reader.readLine();
+        }
+        reader.close();
+
+        patata = "FINAL_FITXER" + separador + line;
+        sortidaCapAlSocket.println(patata);
+        sortidaCapAlSocket.flush();
+
+        /**OutputStream os = socket.getOutputStream();
+         System.out.println("Sending " + dadesAEnviar[1] + "(" + mybytearray.length + " bytes)");
+         os.write(mybytearray,0,mybytearray.length);
+         os.flush();
+         System.out.println("Done.");*/
+
+
+
+
+        /**if (bis != null) bis.close();
+         if (os != null) os.close();*/
+
+    }
     
     private static void procesarComunicacionsAmbClient(Socket clientSocket) {
         String missatgeDelClient = "";
@@ -230,7 +271,10 @@ public class SPU_9_server {
                 missatgeDelClient = entradaPelClientSocket.readLine();
                 System.out.println("************"+missatgeDelClient);
                 dadesAEnviarAlClient = procesarMissatgeDelClient(missatgeDelClient, entradaPelClientSocket, clientSocket);
-                if (!dadesAEnviarAlClient[0].equals("MISSATGEENCRIPTAT")){
+                if (dadesAEnviarAlClient[0].equals("FITXER")) {
+                    //PARA ENVIAR EL FICHERO AL SERVER
+                    enviarFitxer(dadesAEnviarAlClient, sortidaCapAlClientSocket, clientSocket);
+                } else if (!dadesAEnviarAlClient[0].equals("MISSATGEENCRIPTAT")){
                     sortidaCapAlClientSocket.println(dadesAEnviarAlClient[1]);
                     sortidaCapAlClientSocket.flush();
                 } else {

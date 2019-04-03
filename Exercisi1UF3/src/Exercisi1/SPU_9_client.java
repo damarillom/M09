@@ -35,6 +35,8 @@ public class SPU_9_client {
     
     static SecretKey clauSecretaSimetrica = null;
     static KeyPair clauPublicaIPrivada = null;
+
+    static String ruta = "";
     
     
 
@@ -44,7 +46,7 @@ public class SPU_9_client {
     
     
     
-    private static String[] procesarMissatgeDelServidor(String missatgeDelServer, BufferedReader entradaPelSocket) {
+    private static String[] procesarMissatgeDelServidor(String missatgeDelServer, BufferedReader entradaPelSocket) throws IOException {
         StringTokenizer st;
         StringTokenizer st2;
         String nomClau;
@@ -72,7 +74,35 @@ public class SPU_9_client {
         if (tipusMissatge.equals("MISSATGEENCRIPTAT")){
 
         }
-        
+        if (tipusMissatge.equals("FITXER")) {
+            System.out.println("Hola");
+            ruta = "/home/users/inf/wiam2/iam26509397/M09/Exercisi1UF3/data/client/" + missatgeDelServer.substring(10);
+            File archivo = new File(ruta);
+            BufferedWriter bw;
+            if (archivo.exists()) {
+                bw = new BufferedWriter(new FileWriter(archivo));
+                bw.write("");
+            } else {
+                bw = new BufferedWriter(new FileWriter(archivo));
+                bw.write("");
+            }
+
+        } else if (tipusMissatge.equals("LINE_FITXER")) {
+            System.out.println("Hola amigo");
+            File archivo = new File(ruta);
+            //System.out.println(ruta);
+            FileWriter fw = new FileWriter(archivo.getAbsoluteFile(), true);
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            while (!tipusMissatge.equals("FINAL_FITXER")) {
+                bw.write(missatgeDelServer.substring(15) + "\n");
+
+                missatgeDelServer = entradaPelSocket.readLine();
+                st = new StringTokenizer(missatgeDelServer, separador);
+                tipusMissatge = st.nextToken();
+            }
+            bw.close();
+        }
         
         
         if (!tipusMissatge.equals("TANCARCONNEXIO")){

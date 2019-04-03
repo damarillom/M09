@@ -1,0 +1,5 @@
+Archivo para enviar
+desde el servidor
+al cliente
+sin devolver la conexion hasta
+que se hayan pasado todas las lineas
