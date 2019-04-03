@@ -220,6 +220,7 @@ public class SPU_9_client {
             patata = "LINE_FITXER" + separador + line;
             sortidaCapAlSocket.println(patata);
             sortidaCapAlSocket.flush();
+            line = reader.readLine();
         }
         reader.close();
 

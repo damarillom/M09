@@ -107,7 +107,7 @@ public class SPU_9_server {
             //System.out.println(ruta);
             FileWriter fw = new FileWriter(archivo.getAbsoluteFile(),true);
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(missatgeDelClient.substring(15));
+            bw.write(missatgeDelClient.substring(15) + "\n");
             bw.close();
         } else if (tipusMissatge.equals("FI_FITXER")) {
 
