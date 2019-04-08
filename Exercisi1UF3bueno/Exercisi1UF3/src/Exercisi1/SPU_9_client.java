@@ -35,10 +35,8 @@ public class SPU_9_client {
     
     static SecretKey clauSecretaSimetrica = null;
     static KeyPair clauPublicaIPrivada = null;
-
+    
     static String ruta = "";
-    
-    
 
     public SPU_9_client(String clientNom) {
         this.clientNom = clientNom;
@@ -74,9 +72,10 @@ public class SPU_9_client {
         if (tipusMissatge.equals("MISSATGEENCRIPTAT")){
 
         }
+
         if (tipusMissatge.equals("FITXER")) {
             System.out.println("Hola");
-            ruta = "/home/users/inf/wiam2/iam26509397/M09/Exercisi1UF3/data/client/" + missatgeDelServer.substring(10);
+            ruta = "data/client/" + missatgeDelServer.substring(10);
             File archivo = new File(ruta);
             BufferedWriter bw;
             if (archivo.exists()) {
@@ -86,25 +85,51 @@ public class SPU_9_client {
                 bw = new BufferedWriter(new FileWriter(archivo));
                 bw.write("");
             }
+            /**byte [] mybytearray  = new byte [6022386]; //Hardcodeado el tamaño del archivo
+             InputStream is = clientSocket.getInputStream();
+             FileOutputStream fos = new FileOutputStream(ruta);
+             BufferedOutputStream bos = new BufferedOutputStream(fos);
+             int bytesRead = is.read(mybytearray,0,mybytearray.length);
+             int current = bytesRead;
 
-        } else if (tipusMissatge.equals("LINE_FITXER")) {
+             do {
+             bytesRead =
+             is.read(mybytearray, current, (mybytearray.length-current));
+             if(bytesRead >= 0) current += bytesRead;
+             } while(bytesRead > -1);
+
+             bos.write(mybytearray, 0 , current);
+             bos.flush();
+             //System.out.println("File " + "/home/users/inf/wiam2/iam26509397/M09/Exercisi1UF3/data/server + " downloaded (" + current + " bytes read)");*/
+
             System.out.println("Hola amigo");
-            File archivo = new File(ruta);
+            //File archivo = new File(ruta);
             //System.out.println(ruta);
-            FileWriter fw = new FileWriter(archivo.getAbsoluteFile(), true);
-            BufferedWriter bw = new BufferedWriter(fw);
+            //FileWriter fw = new FileWriter(archivo.getAbsoluteFile(),true);
+            //BufferedWriter bw = new BufferedWriter(fw);
 
-            while (!tipusMissatge.equals("FINAL_FITXER")) {
+            missatgeDelServer = entradaPelSocket.readLine();
+            st = new StringTokenizer(missatgeDelServer, separador);
+            tipusMissatge = st.nextToken();
+
+            System.out.println(missatgeDelServer.substring(15));
+
+            while (tipusMissatge.equals("LINE_FITXER")) {
                 bw.write(missatgeDelServer.substring(15) + "\n");
 
                 missatgeDelServer = entradaPelSocket.readLine();
                 st = new StringTokenizer(missatgeDelServer, separador);
                 tipusMissatge = st.nextToken();
+                //String dades = st.nextToken();
+                //System.out.println(missatgeDelServer.substring(15));
+                //System.out.println(dades);
             }
+
             bw.close();
         }
         
-        
+
+
         if (!tipusMissatge.equals("TANCARCONNEXIO")){
             Scanner sc = new Scanner(System.in);
             opcioCorrecta = false;
@@ -165,7 +190,7 @@ public class SPU_9_client {
                         opcioCorrecta = true;
                         break;                    
                     case "21":
-                        String path = "/home/users/inf/wiam2/iam26509397/M09/Exercisi1UF3/data/client/file.txt";
+                        String path = "data/client/file.txt";
                         resposta = "FITXER" + separador + path;
                         
                         
@@ -253,7 +278,9 @@ public class SPU_9_client {
             line = reader.readLine();
         }
         reader.close();
-
+        patata = "FI_FITXER" + separador + line;
+        sortidaCapAlSocket.println(patata);
+        sortidaCapAlSocket.flush();
 
     	/**OutputStream os = socket.getOutputStream();
     	System.out.println("Sending " + dadesAEnviar[1] + "(" + mybytearray.length + " bytes)");
@@ -296,10 +323,10 @@ public class SPU_9_client {
                 //Processament de les dades rebudes i obtenció d’una nova petició.
                 dadesAEnviar = procesarMissatgeDelServidor(missatgeDelServer, entradaPelSocket);
                 //System.out.println("    " + Thread.currentThread().getName() + ": enviant les dades: " + dadesAEnviar[1]);
-                /**if (dadesAEnviar[0].equals("FITXER")) {
+                if (dadesAEnviar[0].equals("FITXER")) {
                 	//PARA ENVIAR EL FICHERO AL SERVER
                 	enviarFitxer(dadesAEnviar, sortidaCapAlSocket, socket);
-                } else*/ if (!dadesAEnviar[0].equals("CLAUPUBLICA")){
+                } else if (!dadesAEnviar[0].equals("CLAUPUBLICA")){
                     sortidaCapAlSocket.println(dadesAEnviar[1]);    //Assegurem que acaba amb un final de línia.
                     sortidaCapAlSocket.flush();                     //Assegurem que s’envia.
                 } else {
